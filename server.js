@@ -1,0 +1,27 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParse = require('body-parser');
+const app = express();
+
+const bookRouter = require('./route/book');
+
+const port = process.env.PORT || 3000;
+require('dotenv').config({ silent: process.env.NODE_ENV === 'production' });
+app.use(bodyParse.json());
+
+//Create server port
+app.listen(port, () => console.log(`Server listen on port ${port}`));
+
+//Connect to DB
+const db = mongoose.connection;
+mongoose.connect(process.env.MONGO_URL, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true
+});
+//If connected to DB
+db.once('open', () => console.log(`Successfully connected to MongoDB`));
+//If failed connect to DB
+db.on(`error`, (err) => console.log(err));
+
+//Route
+app.use('/books', bookRouter);
