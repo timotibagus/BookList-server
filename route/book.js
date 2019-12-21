@@ -33,4 +33,27 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
+router.delete('/:id', async (req, res) => {
+	const { id } = req.params;
+	try {
+		await Book.deleteOne({ _id: id }).then(res.json(`Data remove`));
+	} catch (err) {
+		res.json(err);
+	}
+});
+
+router.patch('/:id', async (req, res) => {
+	const { id } = req.params;
+	const { title, description, publisher } = req.body;
+	try {
+		const bookUpdate = await Book.updateOne(
+			{ _id: id },
+			{ $set: { title, description, publisher } }
+		);
+		res.json(bookUpdate);
+	} catch (error) {
+		res.json(err);
+	}
+});
+
 module.exports = router;
